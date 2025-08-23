@@ -7,7 +7,11 @@ Inherits ConsoleApplication
 		  var sBackupsPath as String
 		  
 		  // Parse flags
-		  for each sArg as String in args
+		  for i as Integer = 0 to args.LastIndex
+		    // args(0) = this executable path
+		    if i = 0 then continue for i
+		    var sArg as String = args(i)
+		    
 		    if sArg = "--dry-run" then
 		      bDryRun = true
 		      
@@ -20,7 +24,7 @@ Inherits ConsoleApplication
 		      
 		    end
 		    
-		  next sArg
+		  next i
 		  
 		  SetupBackupsLocation(sBackupsPath)
 		  
