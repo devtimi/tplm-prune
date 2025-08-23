@@ -18,6 +18,46 @@ Inherits ConsoleApplication
 		    
 		  end
 		  
+		  // Retain everything in the last 4 weeks
+		  var dti4Wk as new DateInterval(0, 0, 28)
+		  var dtmPurge as DateTime = DateTime.Now - dti4Wk
+		  var sPurgeBefore as String = dtmPurge.SQLDate
+		  
+		  // We'll need to sort in-framework because not every filesystem guarantees order
+		  var arsBackups() as String
+		  var arfBackups() as FolderItem
+		  
+		  for each fTarget as FolderItem in mfTarget.Children
+		    // SQLDate string comparison is much faster than DateTime comparison
+		    // Fast, easy way to filter out things we don't even need to evaluate (retain)
+		    var sTargetDate as String = fTarget.Name
+		    if sTargetDate < sPurgeBefore then
+		      // Backup is older than 28 days
+		      arsBackups.Add(sTargetDate) // (skip asking for the name again)
+		      arfBackups.Add(fTarget)
+		      
+		    end
+		    
+		  next fTarget
+		  
+		  arsBackups.SortWith(arfBackups)
+		  
+		  // Both are now sorted by date ASC
+		  // Reverse that
+		  var ariReverse() as Integer
+		  for i as Integer = arsBackups.LastIndex downto 0
+		    ariReverse.Add(i)
+		    
+		  next i
+		  
+		  ariReverse.SortWith(arfBackups, arsBackups)
+		  
+		  // Arrays sorted by date text stamp DESC
+		  ariReverse.ResizeTo(-1)
+		  
+		  // This is memory for items we will be purging
+		  var arfPurge() as FolderItem
+		  
 		  
 		End Function
 	#tag EndEvent
