@@ -12,15 +12,17 @@ While the TPLM Web Panel offers a purge tool, this console application automates
 The prune tool will retain the last backup within the relevant window of time.
 
 
-## Example usage:
+## Usage:
 
-Execute the `tplm-prune` executable without a parameter to operate on the default backups location. Optionally pass `tplm-prune` a path for the backups location if you are not using the default.
+Execute the `tplm-prune` executable without a parameter to operate on the default backups location.
+
+Optionally pass a path for the backups location if you are not using the default. The path parameter is determined by having a forward slash as the first character.
+
+Use the `--dry-run` flag to preview the items that purge logic will delete. This flag can be used with or without the optional path parameter.
 
 ```
-tplm-prune /path/to/.com.strawberrysw.licensemanager/backups
+tplm-prune /path/to/.com.strawberrysw.licensemanager/backups --dry-run
 ```
-
-<small>(with optional parameter)</small>
 
 ## Automate with Lifeboat
 

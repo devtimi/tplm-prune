@@ -3,12 +3,21 @@ Protected Class App
 Inherits ConsoleApplication
 	#tag Event
 		Function Run(args() as String) As Integer
+		  var bDryRun as Boolean
 		  var sBackupsPath as String
 		  
-		  if args.LastIndex > 0 then
-		    sBackupsPath = args(1)
+		  // Parse flags
+		  for each sArg as String in args
+		    if sArg = "--dry-run" then
+		      bDryRun = true
+		      
+		    elseif sArg.Left(1) = "/" then
+		      // maybe? a path
+		      sBackupsPath = args(1)
+		      
+		    end
 		    
-		  end
+		  next sArg
 		  
 		  SetupBackupsLocation(sBackupsPath)
 		  
@@ -73,6 +82,8 @@ Inherits ConsoleApplication
 		    catch ex as UnsupportedFormatException
 		      // Is not occurring on macOS and Linux
 		      // https://xojo.com/issue/79365
+		      Print("Bad input path: " + sCustomPath)
+		      Print("Reverting to default path")
 		      
 		    end try
 		    
