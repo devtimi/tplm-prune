@@ -20,6 +20,8 @@ Optionally pass a path for the backups location if you are not using the default
 
 Use the `--dry-run` flag to preview the items that purge logic will delete. This flag can be used with or without the optional path parameter.
 
+When automating the prune functionality, use the `-y` flag to skip confirmation before deleting files.
+
 ```
 tplm-prune /path/to/.com.strawberrysw.licensemanager/backups --dry-run
 ```

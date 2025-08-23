@@ -3,13 +3,16 @@ Protected Class App
 Inherits ConsoleApplication
 	#tag Event
 		Function Run(args() as String) As Integer
-		  var bDryRun as Boolean
+		  var bDryRun, bSkipConfirm as Boolean
 		  var sBackupsPath as String
 		  
 		  // Parse flags
 		  for each sArg as String in args
 		    if sArg = "--dry-run" then
 		      bDryRun = true
+		      
+		    elseif sArg = "-y" then
+		      bSkipConfirm = true
 		      
 		    elseif sArg.Left(1) = "/" then
 		      // maybe? a path
@@ -108,7 +111,7 @@ Inherits ConsoleApplication
 		    
 		  next i
 		  
-		  if not bDryRun then
+		  if (not bDryRun) and (not bSkipConfirm) then
 		    // Verify prune
 		    Print("Prune " + arfPurge.Count.ToString("#") + " items? (Y/n)")
 		    Print("    (preview prune targets with the --dry-run flag")
