@@ -115,33 +115,39 @@ Inherits ConsoleApplication
 		    
 		  next i
 		  
-		  if (not bDryRun) and (not bSkipConfirm) then
-		    // Verify prune
-		    Print("Prune " + arfPurge.Count.ToString("#") + " items? (Y/n)")
-		    Print("    (preview prune targets with the --dry-run flag")
+		  if arfPurge.Count < 1 then
+		    Print("Nothing to prune")
 		    
-		    while true
-		      var sResponse as String = stdin.ReadAll
-		      if sResponse.Length < 1 then continue while
-		      Print("")
+		  else
+		    if (not bDryRun) and (not bSkipConfirm) then
+		      // Verify prune
+		      Print("Prune " + arfPurge.Count.ToString("#") + " items? (Y/n)")
+		      Print("    (preview prune targets with the --dry-run flag")
 		      
-		      if sResponse = "Y" then
-		        // Continue to purge deletion
-		        exit while
+		      while true
+		        var sResponse as String = stdin.ReadAll
+		        if sResponse.Length < 1 then continue while
+		        Print("")
 		        
-		      else
-		        // Quit normally
-		        Print("Cancel prune - exiting")
-		        return 0
+		        if sResponse = "Y" then
+		          // Continue to purge deletion
+		          exit while
+		          
+		        else
+		          // Quit normally
+		          Print("Cancel prune - exiting")
+		          return 0
+		          
+		        end
 		        
-		      end
+		      wend
 		      
-		    wend
+		    end
+		    
+		    // Prune logic has been applied, ready to purge
+		    Print("Prune targets:")
 		    
 		  end
-		  
-		  // Prune logic has been applied, ready to purge
-		  if arfPurge.Count > 0 then Print("Prune targets:")
 		  
 		  for each fPurge as FolderItem in arfPurge
 		    Print("  " + fPurge.NativePath)
