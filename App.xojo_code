@@ -64,9 +64,92 @@ Inherits ConsoleApplication
 		  // Arrays sorted by date text stamp DESC
 		  ariReverse.ResizeTo(-1)
 		  
-		  // This is memory for items we will be purging
-		  var arfPurge() as FolderItem
+		  // Setup timeframe for which we only retain yearly copies
+		  var dti12Mo as new DateInterval(0, 12)
+		  var dtmArchive as DateTime = DateTime.Now - dti12Mo
+		  var sArchiveBefore as String = dtmArchive.SQLDate
 		  
+		  // Purge memory
+		  var arfPurge() as FolderItem
+		  var arsArchivedYears(), arsRetainedMonths() as String
+		  
+		  for i as Integer = 0 to arsBackups.LastIndex
+		    var sBackupDate as String = arsBackups(i).Left(10)
+		    var sBackupYear as String = sBackupDate.Left(4)
+		    
+		    if sBackupDate > sArchiveBefore then
+		      // Monthly timeframe
+		      var sBackupMonth as String = sBackupDate.Middle(5, 2)
+		      var sSlug as String = sBackupYear + "-" + sBackupMonth
+		      
+		      if arsRetainedMonths.IndexOf(sSlug) < 0 then
+		        // Needs to retain this month, since sorted DESC this is the last record of the YYYY-MM
+		        arsRetainedMonths.Add(sSlug)
+		        
+		      else
+		        // Needs to purge, this slug (YYYY-MM) is already archived
+		        arfPurge.Add(arfBackups(i))
+		        
+		      end
+		      
+		    else
+		      // Older than a year, check archive
+		      if arsArchivedYears.IndexOf(sBackupYear) < 0 then
+		        // Needs to archive, since sorted DESC this is the last record of the year
+		        arsArchivedYears.Add(sBackupYear)
+		        
+		      else
+		        // Needs to purge, this year is already archived
+		        arfPurge.Add(arfBackups(i))
+		        
+		      end
+		      
+		    end
+		    
+		  next i
+		  
+		  if not bDryRun then
+		    // Verify prune
+		    Print("Prune " + arfPurge.Count.ToString("#") + " items? (Y/n)")
+		    Print("    (preview prune targets with the --dry-run flag")
+		    
+		    while true
+		      var sResponse as String = stdin.ReadAll
+		      if sResponse.Length < 1 then continue while
+		      Print("")
+		      
+		      if sResponse = "Y" then
+		        // Continue to purge deletion
+		        exit while
+		        
+		      else
+		        // Quit normally
+		        Print("Cancel prune - exiting")
+		        return 0
+		        
+		      end
+		      
+		    wend
+		    
+		  end
+		  
+		  // Prune logic has been applied, ready to purge
+		  if arfPurge.Count > 0 then Print("Prune targets:")
+		  
+		  for each fPurge as FolderItem in arfPurge
+		    Print("  " + fPurge.NativePath)
+		    
+		    if not bDryRun then
+		      fPurge.Remove
+		      
+		    end
+		    
+		  next fPurge
+		  
+		  if not bDryRun then
+		    Print("Prune complete")
+		    
+		  end
 		  
 		End Function
 	#tag EndEvent
