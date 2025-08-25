@@ -7,9 +7,8 @@ Inherits ConsoleApplication
 		  var sBackupsPath as String
 		  
 		  // Parse flags
-		  for i as Integer = 0 to args.LastIndex
-		    // args(0) = this executable path
-		    if i = 0 then continue for i
+		  // args(0) = this executable path
+		  for i as Integer = 1 to args.LastIndex
 		    var sArg as String = args(i)
 		    
 		    if sArg = "--dry-run" then
